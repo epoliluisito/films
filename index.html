@@ -227,6 +227,11 @@
     body.ui-black{ --nav:#000; --nav-hover: rgba(255,255,255,.85); --nav-active:#000; }
     body.ui-black.keep-down-original #pageNavDown{ color: hsl(0 0% 65%); }
 
+    /* Desktop: keep FILMS visibly active when top UI switches to black */
+    @media (min-width:861px){
+      body.ui-black .nav a[data-key="films"].is-active{ color: hsl(0 0% 65%); }
+    }
+
     /* Mobile menu panel stays readable even if body is in ui-black */
     .nav-panel{ --nav: hsl(0 0% 65%); --nav-hover:#fff; --nav-active:#fff; }
 .page-nav-arrow::before,
@@ -247,6 +252,8 @@
       :root{--hdr-pad-x:20px;--hdr-pad-top:22px}
       .nav{display:none}
       .nav-toggle{display:inline-flex;align-items:center}
+      /* Mobile: hide "FULL FILM AVAILABLE UPON REQUEST" action across all page blocks */
+      .cover-action--request{ display:none !important; }
     }
   
 
@@ -559,8 +566,8 @@
       }
 
       // Make menu + scroll hints black on specific blocks
-      const BLACK_IDS = new Set(['page_block_02','page_block_05','page_block_09']);
-      const KEEP_DOWN_IDS = new Set(['page_block_02','page_block_09']);
+      const BLACK_IDS = new Set(['page_block_02','page_block_04','page_block_05','page_block_09']);
+      const KEEP_DOWN_IDS = new Set(['page_block_02','page_block_04','page_block_09']);
       function syncUiColor(){
         const id = blocks[currentIndex] && blocks[currentIndex].id;
         const isBlack = BLACK_IDS.has(id);

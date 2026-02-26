@@ -237,7 +237,188 @@
       .nav{display:none}
       .nav-toggle{display:inline-flex;align-items:center}
     }
-  </style>
+  
+
+    
+    /* Hover-only titles + actions (FILMS index) */
+    .page-block img{transition:opacity .22s ease;}
+
+    /* Hotspot: the hover trigger is a centered rectangle roughly matching the text block */
+    .hover-hotspot{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      z-index:4;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      opacity:0;
+      transition:opacity .22s ease;
+      /* Make the hover target easier to discover */
+      padding: 34px 46px;
+      min-width: 360px;
+      min-height: 230px;
+      max-width: min(920px, calc(100% - 56px));
+      pointer-events:auto;
+      /* transparent but still hoverable */
+      background: rgba(0,0,0,0);
+    }
+
+    @media (max-width:520px){
+      .hover-hotspot{
+        min-width: calc(100% - 64px);
+        min-height: 210px;
+        padding: 28px 24px;
+      }
+    }
+
+    .page-block.is-hothover .hover-hotspot{
+      opacity:1;
+    }
+
+    .page-block.is-hothover img{
+      opacity:0.5;
+    }
+
+    .cover-meta{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap: 12px;
+      text-shadow: 0 1px 10px rgba(0,0,0,.30);
+    }
+    .cover-titleline{
+      font-family:"Futura PT","futura-pt","Futura","Avenir Next","Avenir",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      text-transform:uppercase;
+      font-size: clamp(12px, 2vw, 18px);
+      letter-spacing:0.05em;
+      line-height:1.1;
+      display:flex;
+      flex-wrap:wrap;
+      align-items:baseline;
+      justify-content:center;
+      gap:0.35em;
+    }
+    .title-main{
+      font-weight:600;
+      font-size: 0.85em; /* ~15% smaller overall */
+    }
+    .title-sep{
+      font-weight:400;
+      opacity:0.8;
+    }
+    .title-sub{
+      font-weight:300; /* thinner than title */
+      font-size:0.85em;
+      opacity:0.95;
+    }
+    .cover-actions{
+      font-family:"Futura PT","futura-pt","Futura","Avenir Next","Avenir",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      font-size: 11px; /* ~25% bigger than scroll hint (nav-size 8.8px) */
+      letter-spacing: 0.09em;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.62);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+    }
+
+    .cover-actions a{
+      color: inherit;
+      text-decoration:none;
+      border:0;
+    }
+    .cover-actions a:hover{
+      color: rgba(255,255,255,.82);
+      text-decoration:none;
+    }
+    .cover-action{
+      color: inherit;
+      text-decoration:none;
+      border-bottom:1px solid rgba(255,255,255,.18);
+      padding-bottom:1px;
+      transition: color .18s ease, border-color .18s ease;
+    }
+    .cover-action:hover{
+      color: rgba(255,255,255,.82);
+      border-color: rgba(255,255,255,.35);
+    }
+    .cover-action-sep{
+      opacity:0.35;
+    }
+
+    @media (max-width:860px){
+      .hover-hotspot{ padding: 18px 20px; max-width: calc(100% - 40px); }
+      .cover-meta{ gap:10px; }
+      .cover-titleline{ font-size: clamp(10px, 2.7vw, 13px); letter-spacing:0.04em; gap:0.35em; }
+      .cover-actions{ font-size: 11px; }
+    }
+
+  
+    /* Disabled OPEN PAGE tooltip */
+    .cover-action.is-disabled{
+      cursor: default;
+      opacity: 0.75;
+      position: relative;
+    }
+    .cover-action.is-disabled:hover{ color: rgba(255,255,255,.62); }
+    .cover-action.is-disabled::after{
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 10px);
+      transform: translateX(-50%);
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(0,0,0,.78);
+      border: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.78);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .16s ease, transform .16s ease;
+    }
+    .cover-action.is-disabled:hover::after,
+    .cover-action.is-disabled:focus-visible::after{
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Fullscreen video overlay */
+    .video-overlay{
+      position: fixed;
+      inset: 0;
+      z-index: 20000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.92);
+    }
+    .video-overlay.is-open{ display: flex; }
+    .video-overlay__video{
+      width: 100%;
+      height: 100%;
+      max-width: 100vw;
+      max-height: 100vh;
+      object-fit: contain;
+      background: #000;
+    }
+    .video-overlay__close{
+      position:absolute; top:16px; right:16px; width:36px; height:36px;
+      border:1px solid rgba(255,255,255,.8); background:rgba(0,0,0,.35);
+      color:#fff; display:flex; align-items:center; justify-content:center;
+      font:400 22px/1 Arial, sans-serif; cursor:pointer; z-index:20001;
+      border-radius:0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+</style>
 </head>
 <body>
 <header aria-label="Site header" class="site-header" role="banner">
@@ -257,70 +438,48 @@
 </header>
 <main aria-label="Projects" class="snap-wrap" role="main">
 <section aria-label="Not(e) for a Dreamer cover" class="page-block" id="page_block_01">
-<a aria-label="Open Not(e) for a Dreamer project" class="cover-link" href="https://films.enricopoli.com/projects/note_for_a_dreamer/">
-<span class="title-main">Not(e) for a Dreamer</span><span class="title-sub">/// fashion film</span>
-</a>
+<div class="hover-hotspot" tabindex="0"><div class="cover-meta"><div class="cover-titleline"><span class="title-main">Not(e) for a Dreamer</span><span class="title-sep">·</span><span class="title-sub">fashion film</span></div><div aria-label="Project actions" class="cover-actions"><a aria-label="Play Not(e) for a Dreamer" class="cover-action cover-action--play" href="#" data-video="http://films.enricopoli.com/projects/note_for_a_dreamer/assets/note_for_a_dreamer.mp4">PLAY</a><span aria-hidden="true" class="cover-action-sep">|</span><a class="cover-action cover-action--open is-disabled" href="javascript:void(0)" aria-disabled="true" data-tooltip="coming soon...">OPEN PAGE</a></div></div></div>
 <img alt="Not(e) for a Dreamer cover" decoding="async" loading="eager" src="https://films.enricopoli.com/projects/note_for_a_dreamer/assets/note_for_a_dreamer_cover.webp"/>
 </section>
 <section aria-label="The Pursuit of Harmony cover" class="page-block" id="page_block_02">
-<a aria-label="Open The Pursuit of Harmony project" class="cover-link" href="https://films.enricopoli.com/projects/the_pursuit_of_harmony/">
-<span class="title-main">The Pursuit of Harmony</span><span class="title-sub">/// commercial</span>
-</a>
+<div class="hover-hotspot" tabindex="0"><div class="cover-meta"><div class="cover-titleline"><span class="title-main">The Pursuit of Harmony</span><span class="title-sep">·</span><span class="title-sub">commercial</span></div><div aria-label="Project actions" class="cover-actions"><a aria-label="Play The Pursuit of Harmony" class="cover-action cover-action--play" href="#" data-video="https://films.enricopoli.com/projects/the_pursuit_of_harmony/assets/the_pursuit_of_harmony.mp4">PLAY</a><span aria-hidden="true" class="cover-action-sep">|</span><a class="cover-action cover-action--open is-disabled" href="javascript:void(0)" aria-disabled="true" data-tooltip="coming soon...">OPEN PAGE</a></div></div></div>
 <img alt="The Pursuit of Harmony cover" decoding="async" loading="lazy" src="https://films.enricopoli.com/projects/the_pursuit_of_harmony/assets/the_pursuit_of_harmony_cover.webp"/>
 </section>
 <section aria-label="We Are One cover" class="page-block" id="page_block_03">
-<a aria-label="Open We Are One project" class="cover-link" href="https://films.enricopoli.com/projects/we_are_one/">
-<span class="title-main">We Are One</span><span class="title-sub">/// commercial</span>
-</a>
+<div class="hover-hotspot" tabindex="0"><div class="cover-meta"><div class="cover-titleline"><span class="title-main">We Are One</span><span class="title-sep">·</span><span class="title-sub">commercial</span></div><div aria-label="Project actions" class="cover-actions"><a aria-label="Play We Are One" class="cover-action cover-action--play" href="#" data-video="https://films.enricopoli.com/projects/we_are_one/assets/we_are_one.mp4">PLAY</a><span aria-hidden="true" class="cover-action-sep">|</span><a class="cover-action cover-action--open is-disabled" href="javascript:void(0)" aria-disabled="true" data-tooltip="coming soon...">OPEN PAGE</a></div></div></div>
 <img alt="We Are One cover" decoding="async" loading="lazy" src="https://films.enricopoli.com/projects/we_are_one/assets/we_are_one_cover.webp"/>
 </section>
 <section aria-label="Wind Day cover" class="page-block" id="page_block_04">
-<a aria-label="Open Wind Day project" class="cover-link" href="https://films.enricopoli.com/projects/wind_day/">
-<span class="title-main">Wind Day</span><span class="title-sub">/// short film</span>
-</a>
+<div class="hover-hotspot" tabindex="0"><div class="cover-meta"><div class="cover-titleline"><span class="title-main">Wind Day</span><span class="title-sep">·</span><span class="title-sub">short film</span></div><div aria-label="Project actions" class="cover-actions"><a aria-label="Play Wind Day" class="cover-action cover-action--play" href="#" data-video="https://films.enricopoli.com/projects/wind_day/assets/wind_day_trailer.mp4">PLAY</a><span aria-hidden="true" class="cover-action-sep">|</span><a class="cover-action cover-action--open is-disabled" href="javascript:void(0)" aria-disabled="true" data-tooltip="coming soon...">OPEN PAGE</a></div></div></div>
 <img alt="Wind Day cover" decoding="async" loading="lazy" src="https://films.enricopoli.com/projects/wind_day/assets/wind_day_cover.webp"/>
 </section>
 <section aria-label="Puer Apuliae cover" class="page-block" id="page_block_05">
-<a aria-label="Open Puer Apuliae project" class="cover-link" href="https://films.enricopoli.com/projects/puer_apuliae/">
-<span class="title-main">Puer Apuliae</span><span class="title-sub">/// branded documentary</span>
-</a>
+<div class="hover-hotspot" tabindex="0"><div class="cover-meta"><div class="cover-titleline"><span class="title-main">Puer Apuliae</span><span class="title-sep">·</span><span class="title-sub">branded documentary</span></div><div aria-label="Project actions" class="cover-actions"><a aria-label="Play Puer Apuliae" class="cover-action cover-action--play" href="#" data-video="http://films.enricopoli.com/projects/puer_apuliae/assets/puer_apuliae_trailer.mp4">PLAY</a><span aria-hidden="true" class="cover-action-sep">|</span><a class="cover-action cover-action--open is-disabled" href="javascript:void(0)" aria-disabled="true" data-tooltip="coming soon...">OPEN PAGE</a></div></div></div>
 <img alt="Puer Apuliae cover" decoding="async" loading="lazy" src="https://films.enricopoli.com/projects/puer_apuliae/assets/puer_apuliae_cover.webp"/>
 </section>
 <section aria-label="Je Suis Responsable cover" class="page-block" id="page_block_06">
-<a aria-label="Open Je Suis Responsable project" class="cover-link" href="https://films.enricopoli.com/projects/je_suis_responsable/">
-<span class="title-main">Je Suis Responsable</span><span class="title-sub">/// fashion film</span>
-</a>
+<div class="hover-hotspot" tabindex="0"><div class="cover-meta"><div class="cover-titleline"><span class="title-main">Je Suis Responsable</span><span class="title-sep">·</span><span class="title-sub">fashion film</span></div><div aria-label="Project actions" class="cover-actions"><a aria-label="Play Je Suis Responsable" class="cover-action cover-action--play" href="#" data-video="https://films.enricopoli.com/projects/je_suis_responsable/assets/je_suis_responsable_trailer.mp4">PLAY</a><span aria-hidden="true" class="cover-action-sep">|</span><a class="cover-action cover-action--open is-disabled" href="javascript:void(0)" aria-disabled="true" data-tooltip="coming soon...">OPEN PAGE</a></div></div></div>
 <img alt="Je Suis Responsable cover" decoding="async" loading="lazy" src="https://films.enricopoli.com/projects/je_suis_responsable/assets/je_suis_responsable_cover.webp"/>
 </section>
 <section aria-label="Non Solo, Solo. Arturo Brachetti cover" class="page-block" id="page_block_07">
-<a aria-label="Open Non Solo, Solo. Arturo Brachetti project" class="cover-link" href="https://films.enricopoli.com/projects/brachetti_solo/">
-<span class="title-main">Non Solo, Solo. Arturo Brachetti</span><span class="title-sub">/// documentary</span>
-</a>
+<div class="hover-hotspot" tabindex="0"><div class="cover-meta"><div class="cover-titleline"><span class="title-main">Non Solo, Solo. Arturo Brachetti</span><span class="title-sep">·</span><span class="title-sub">documentary</span></div><div aria-label="Project actions" class="cover-actions"><a aria-label="Play Non Solo, Solo. Arturo Brachetti" class="cover-action cover-action--play" href="#" data-video="http://films.enricopoli.com/projects/brachetti_solo/assets/brachetti_solo_teaser.mp4">PLAY</a><span aria-hidden="true" class="cover-action-sep">|</span><a class="cover-action cover-action--open is-disabled" href="javascript:void(0)" aria-disabled="true" data-tooltip="coming soon...">OPEN PAGE</a></div></div></div>
 <img alt="Non Solo, Solo. Arturo Brachetti cover" decoding="async" loading="lazy" src="https://films.enricopoli.com/projects/brachetti_solo/assets/brachetti_solo_cover.webp"/>
 </section>
 <section aria-label="The Future cover" class="page-block" id="page_block_08">
-<a aria-label="Open The Future project" class="cover-link" href="https://films.enricopoli.com/projects/the_future/">
-<span class="title-main">The Future</span><span class="title-sub">/// short film</span>
-</a>
+<div class="hover-hotspot" tabindex="0"><div class="cover-meta"><div class="cover-titleline"><span class="title-main">The Future</span><span class="title-sep">·</span><span class="title-sub">short film</span></div><div aria-label="Project actions" class="cover-actions"><a aria-label="Play The Future" class="cover-action cover-action--play" href="#" data-video="https://films.enricopoli.com/projects/the_future/assets/the_future_trailer.mp4">PLAY</a><span aria-hidden="true" class="cover-action-sep">|</span><a class="cover-action cover-action--open is-disabled" href="javascript:void(0)" aria-disabled="true" data-tooltip="coming soon...">OPEN PAGE</a></div></div></div>
 <img alt="The Future cover" decoding="async" loading="lazy" src="https://films.enricopoli.com/projects/the_future/assets/the_future_cover.webp"/>
 </section>
 <section aria-label="I Giorni nel Tempo cover" class="page-block" id="page_block_09">
-<a aria-label="Open I Giorni nel Tempo project" class="cover-link" href="https://films.enricopoli.com/projects/i_giorni_nel_tempo/">
-<span class="title-main">I Giorni nel Tempo</span><span class="title-sub">/// documentary short</span>
-</a>
+<div class="hover-hotspot" tabindex="0"><div class="cover-meta"><div class="cover-titleline"><span class="title-main">I Giorni nel Tempo</span><span class="title-sep">·</span><span class="title-sub">documentary short</span></div><div aria-label="Project actions" class="cover-actions"><a aria-label="Play I Giorni nel Tempo" class="cover-action cover-action--play" href="#" data-video="https://films.enricopoli.com/projects/i_giorni_nel_tempo/assets/i_giorni_nel_tempo_trailer.mp4">PLAY</a><span aria-hidden="true" class="cover-action-sep">|</span><a class="cover-action cover-action--open is-disabled" href="javascript:void(0)" aria-disabled="true" data-tooltip="coming soon...">OPEN PAGE</a></div></div></div>
 <img alt="I Giorni nel Tempo cover" decoding="async" loading="lazy" src="https://films.enricopoli.com/projects/i_giorni_nel_tempo/assets/i_giorni_nel_tempo_cover.webp"/>
 </section>
 <section aria-label="Closure cover" class="page-block" id="page_block_10">
-<a aria-label="Open Closure project" class="cover-link" href="https://films.enricopoli.com/projects/closure/">
-<span class="title-main">Closure</span><span class="title-sub">/// short film</span>
-</a>
+<div class="hover-hotspot" tabindex="0"><div class="cover-meta"><div class="cover-titleline"><span class="title-main">Closure</span><span class="title-sep">·</span><span class="title-sub">short film</span></div><div aria-label="Project actions" class="cover-actions"><a aria-label="Play Closure" class="cover-action cover-action--play" href="#" data-video="https://films.enricopoli.com/projects/closure/assets/closure_trailer.mp4">PLAY</a><span aria-hidden="true" class="cover-action-sep">|</span><a class="cover-action cover-action--open is-disabled" href="javascript:void(0)" aria-disabled="true" data-tooltip="coming soon...">OPEN PAGE</a></div></div></div>
 <img alt="Closure cover" decoding="async" loading="lazy" src="https://films.enricopoli.com/projects/closure/assets/closure_cover.webp"/>
 </section>
 <section aria-label="MONO-Y cover" class="page-block" id="page_block_11">
-<a aria-label="Open MONO-Y project" class="cover-link" href="https://films.enricopoli.com/projects/mono_y/">
-<span class="title-main">MONO-Y</span><span class="title-sub">/// fashion film</span>
-</a>
-<img alt="MONO-Y cover" decoding="async" loading="lazy" src="https://films.enricopoli.com/projects/the_future/assets/the_future_cover.webp"/>
+<div class="hover-hotspot" tabindex="0"><div class="cover-meta"><div class="cover-titleline"><span class="title-main">MONO-Y</span><span class="title-sep">·</span><span class="title-sub">fashion film</span></div><div aria-label="Project actions" class="cover-actions"><a aria-label="Play MONO-Y" class="cover-action cover-action--play" href="#" data-video="https://films.enricopoli.com/projects/mono_y/assets/mono_y.mp4">PLAY</a><span aria-hidden="true" class="cover-action-sep">|</span><a class="cover-action cover-action--open is-disabled" href="javascript:void(0)" aria-disabled="true" data-tooltip="coming soon...">OPEN PAGE</a></div></div></div>
+<img alt="MONO-Y cover" decoding="async" loading="lazy" src="https://films.enricopoli.com/projects/mono_y/assets/mono_y_cover.webp"/>
 </section>
 </main>
 <div aria-hidden="true" class="page-nav-arrows">
@@ -338,6 +497,13 @@
 <a data-key="journal" href="https://www.enricopoli.com/journal">JOURNAL</a>
 <a data-key="about" href="https://www.enricopoli.com/about">ABOUT</a>
 </aside>
+
+<!-- Video overlay (PLAY) -->
+<div class="video-overlay" id="videoOverlay" aria-hidden="true">
+  <button class="video-overlay__close" id="videoClose" aria-label="Close video">×</button>
+  <video class="video-overlay__video" id="videoPlayer" controls playsinline></video>
+</div>
+
 <script>
     (function(){
       document.querySelectorAll('[data-key="films"]').forEach(a => a.classList.add('is-active'));
@@ -403,5 +569,107 @@
       }
     })();
   </script>
+
+<script>
+  // Hover activation only within the centered hotspot rectangle
+  (function(){
+    const hotspots = document.querySelectorAll('.hover-hotspot');
+    hotspots.forEach(h => {
+      const block = h.closest('.page-block');
+      if(!block) return;
+
+      const on = () => block.classList.add('is-hothover');
+      const off = () => block.classList.remove('is-hothover');
+
+      h.addEventListener('mouseenter', on);
+      h.addEventListener('mouseleave', off);
+      h.addEventListener('focus', on);
+      h.addEventListener('blur', off);
+
+      // Touch: tap toggles overlay; second tap on a link will work normally
+      h.addEventListener('touchstart', (e) => {
+        if(!block.classList.contains('is-hothover')){
+          on();
+          e.preventDefault();
+        }
+      }, {passive:false});
+
+      // If user taps elsewhere in the block, close
+      block.addEventListener('touchstart', (e) => {
+        if(!h.contains(e.target)) off();
+      }, {passive:true});
+    });
+  })();
+</script>
+
+
+<script>
+  // PLAY opens a fullscreen overlay video player (with controls + close button).
+  (function(){
+    const overlay = document.getElementById('videoOverlay');
+    const player  = document.getElementById('videoPlayer');
+    const closeBtn = document.getElementById('videoClose');
+
+    if(!overlay || !player || !closeBtn) return;
+
+    function openVideo(src){
+      player.pause();
+      player.removeAttribute('src');
+      player.load();
+
+      player.src = src;
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+
+      // Try true fullscreen where available (still keep our own close button)
+      const req = player.requestFullscreen || player.webkitRequestFullscreen || player.msRequestFullscreen;
+      if(req){
+        try{ req.call(player); }catch(e){}
+      }
+
+      // Start playback (may be blocked until user gesture; click qualifies)
+      const p = player.play();
+      if(p && typeof p.catch === 'function') p.catch(()=>{});
+    }
+
+    function closeVideo(){
+      player.pause();
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden','true');
+      document.body.style.overflow = '';
+
+      // exit fullscreen if we entered it
+      const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+      if(exit && (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement)){
+        try{ exit.call(document); }catch(e){}
+      }
+
+      player.removeAttribute('src');
+      player.load();
+    }
+
+    document.querySelectorAll('.cover-action--play[data-video]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const src = a.getAttribute('data-video');
+        if(src) openVideo(src);
+      });
+    });
+
+    // OPEN PAGE is disabled for now
+    document.querySelectorAll('.cover-action--open.is-disabled').forEach(a => {
+      a.addEventListener('click', (e) => e.preventDefault());
+    });
+
+    closeBtn.addEventListener('click', closeVideo);
+    overlay.addEventListener('click', (e) => { if(e.target === overlay) closeVideo(); });
+
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && overlay.classList.contains('is-open')) closeVideo();
+    });
+  })();
+</script>
+
 </body>
 </html>

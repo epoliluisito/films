@@ -218,7 +218,10 @@
       color:var(--nav);
       white-space:nowrap;
     }
-    .page-nav-arrow::before,
+
+    /* UI color swap for selected blocks (menu + scroll hints) */
+    body.ui-black{ --nav:#000; --nav-active:#000; }
+.page-nav-arrow::before,
     .page-nav-arrow::after{ display:none; }
     
     .page-nav-arrow--up{ top:10px; }
@@ -534,6 +537,12 @@
         if (downBtn) downBtn.hidden = currentIndex >= blocks.length - 1;
       }
 
+      // Make menu + scroll hints black on specific blocks
+      const BLACK_IDS = new Set(['page_block_02','page_block_05','page_block_09']);
+      function syncUiColor(){
+        const id = blocks[currentIndex] && blocks[currentIndex].id;
+        document.body.classList.toggle('ui-black', BLACK_IDS.has(id));
+      }
       if (wrap && blocks.length){
         if ('IntersectionObserver' in window){
           const io = new IntersectionObserver(function(entries){
@@ -549,6 +558,7 @@
               if (i !== -1){
                 currentIndex = i;
                 updateArrows();
+                syncUiColor();
               }
             }
           }, { root: wrap, threshold: [0.35, 0.55, 0.75] });
@@ -565,11 +575,13 @@
             });
             currentIndex = bestIdx;
             updateArrows();
+            syncUiColor();
           };
           wrap.addEventListener('scroll', onScroll, { passive: true });
           onScroll();
         }
         updateArrows();
+        syncUiColor();
       }
     })();
   </script>

@@ -391,15 +391,19 @@
     }
 
     /* Fullscreen video overlay */
-    .video-overlay{
+    .video-overlay,
+    .client-video-layer{
       position: fixed;
       inset: 0;
-      z-index: 20000;
+      z-index: 9999;
       display: none;
       align-items: center;
       justify-content: center;
       background: rgba(0,0,0,.92);
     }
+    /* New DOM-only fullscreen layer (no native fullscreen takeover) */
+    .client-video-layer.show.full{ display: flex; }
+    /* Back-compat (older class toggle) */
     .video-overlay.is-open{ display: flex; }
     .video-overlay__video{
       width: 100%;
@@ -499,9 +503,9 @@
 </aside>
 
 <!-- Video overlay (PLAY) -->
-<div class="video-overlay" id="videoOverlay" aria-hidden="true">
+<div class="video-overlay client-video-layer" id="videoOverlay" aria-hidden="true">
   <button class="video-overlay__close" id="videoClose" aria-label="Close video">×</button>
-  <video class="video-overlay__video" id="videoPlayer" controls playsinline></video>
+  <video class="video-overlay__video" id="videoPlayer" playsinline webkit-playsinline></video>
 </div>
 
 <script>
@@ -604,56 +608,53 @@
 
 
 <script>
-  // PLAY opens a fullscreen overlay video player (with controls + close button).
+  // PLAY opens a pure DOM overlay (no requestFullscreen / no native fullscreen takeover).
   (function(){
-    const overlay = document.getElementById('videoOverlay');
-    const player  = document.getElementById('videoPlayer');
+    const layer    = document.getElementById('videoOverlay'); // .client-video-layer
+    const player   = document.getElementById('videoPlayer');
     const closeBtn = document.getElementById('videoClose');
 
-    if(!overlay || !player || !closeBtn) return;
+    if(!layer || !player || !closeBtn) return;
 
-    function openVideo(src){
-      player.pause();
+    // Ensure inline playback behavior
+    player.setAttribute('playsinline','');
+    player.setAttribute('webkit-playsinline','');
+    player.controls = false;
+
+    function openClientVideoFullscreen(src){
+      // reset
+      try{ player.pause(); }catch(e){}
       player.removeAttribute('src');
       player.load();
 
       player.src = src;
-      overlay.classList.add('is-open');
-      overlay.setAttribute('aria-hidden','false');
+
+      // show fixed overlay layer
+      layer.classList.add('show','full');
+      layer.setAttribute('aria-hidden','false');
       document.body.style.overflow = 'hidden';
 
-      // Try true fullscreen where available (still keep our own close button)
-      const req = player.requestFullscreen || player.webkitRequestFullscreen || player.msRequestFullscreen;
-      if(req){
-        try{ req.call(player); }catch(e){}
-      }
-
-      // Start playback (may be blocked until user gesture; click qualifies)
+      // start playback (user gesture: click)
       const p = player.play();
       if(p && typeof p.catch === 'function') p.catch(()=>{});
     }
 
-    function closeVideo(){
-      player.pause();
-      overlay.classList.remove('is-open');
-      overlay.setAttribute('aria-hidden','true');
+    function closeClientVideo(){
+      try{ player.pause(); }catch(e){}
+      layer.classList.remove('show','full');
+      layer.setAttribute('aria-hidden','true');
       document.body.style.overflow = '';
-
-      // exit fullscreen if we entered it
-      const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
-      if(exit && (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement)){
-        try{ exit.call(document); }catch(e){}
-      }
 
       player.removeAttribute('src');
       player.load();
     }
 
+    // Hook PLAY buttons
     document.querySelectorAll('.cover-action--play[data-video]').forEach(a => {
       a.addEventListener('click', (e) => {
         e.preventDefault();
         const src = a.getAttribute('data-video');
-        if(src) openVideo(src);
+        if(src) openClientVideoFullscreen(src);
       });
     });
 
@@ -662,12 +663,15 @@
       a.addEventListener('click', (e) => e.preventDefault());
     });
 
-    closeBtn.addEventListener('click', closeVideo);
-    overlay.addEventListener('click', (e) => { if(e.target === overlay) closeVideo(); });
+    closeBtn.addEventListener('click', closeClientVideo);
+    layer.addEventListener('click', (e) => { if(e.target === layer) closeClientVideo(); });
 
     document.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape' && overlay.classList.contains('is-open')) closeVideo();
+      if(e.key === 'Escape' && layer.classList.contains('show')) closeClientVideo();
     });
+
+    // expose for debugging / parity with requested API name
+    window.openClientVideoFullscreen = openClientVideoFullscreen;
   })();
 </script>
 

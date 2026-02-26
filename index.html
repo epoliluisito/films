@@ -8,6 +8,7 @@
 <style>
     :root{
       --nav: hsl(0 0% 65%);
+      --nav-hover: #fff;
       --nav-active: #fff;
 --hdr-pad-top: 27.5px;
       --hdr-pad-x: 24px;
@@ -48,7 +49,8 @@
       white-space:nowrap;
       transition:color .18s ease;
     }
-    .nav a:hover,.nav a.is-active{color:var(--nav-active)}
+    .nav a:hover{color:var(--nav-hover)}
+    .nav a.is-active{color:var(--nav-active)}
 
     .nav-toggle{
       display:none;
@@ -81,6 +83,7 @@
       font-size:12px;letter-spacing:var(--nav-track);text-transform:uppercase;
       color:var(--nav);text-decoration:none;
     }
+    .nav-panel a:hover{ color:var(--nav-hover); }
     .nav-panel a.is-active{color:var(--nav-active)}
     .nav-panel__close{
       position:fixed;top:18px;right:18px;z-index:10001;
@@ -220,8 +223,12 @@
     }
 
     /* UI color swap for selected blocks (menu + scroll hints) */
-    body.ui-black{ --nav:#000; --nav-active:#000; }
+    /* When UI switches to black, keep a visible hover/active state */
+    body.ui-black{ --nav:#000; --nav-hover: rgba(255,255,255,.85); --nav-active:#000; }
     body.ui-black.keep-down-original #pageNavDown{ color: hsl(0 0% 65%); }
+
+    /* Mobile menu panel stays readable even if body is in ui-black */
+    .nav-panel{ --nav: hsl(0 0% 65%); --nav-hover:#fff; --nav-active:#fff; }
 .page-nav-arrow::before,
     .page-nav-arrow::after{ display:none; }
     

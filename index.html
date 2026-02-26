@@ -9,7 +9,7 @@
     :root{
       --nav: hsl(0 0% 65%);
       --nav-active: #fff;
-      --hdr-pad-top: 27.5px;
+--hdr-pad-top: 27.5px;
       --hdr-pad-x: 24px;
       --nav-size: 8.8px;
       --nav-track: 1.11px;
@@ -221,6 +221,7 @@
 
     /* UI color swap for selected blocks (menu + scroll hints) */
     body.ui-black{ --nav:#000; --nav-active:#000; }
+    body.ui-black.keep-down-original #pageNavDown{ color: hsl(0 0% 65%); }
 .page-nav-arrow::before,
     .page-nav-arrow::after{ display:none; }
     
@@ -552,9 +553,12 @@
 
       // Make menu + scroll hints black on specific blocks
       const BLACK_IDS = new Set(['page_block_02','page_block_05','page_block_09']);
+      const KEEP_DOWN_IDS = new Set(['page_block_02','page_block_09']);
       function syncUiColor(){
         const id = blocks[currentIndex] && blocks[currentIndex].id;
-        document.body.classList.toggle('ui-black', BLACK_IDS.has(id));
+        const isBlack = BLACK_IDS.has(id);
+        document.body.classList.toggle('ui-black', isBlack);
+        document.body.classList.toggle('keep-down-original', isBlack && KEEP_DOWN_IDS.has(id));
       }
       if (wrap && blocks.length){
         if ('IntersectionObserver' in window){
@@ -576,6 +580,31 @@
             }
           }, { root: wrap, threshold: [0.35, 0.55, 0.75] });
           blocks.forEach(b => io.observe(b));
+
+          // Also track scroll position to avoid stale block index (e.g., when a shorter block
+          // doesn't win the intersection ratio), ensuring UI color rules apply correctly.
+          let ticking = false;
+          const onScroll = function(){
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(function(){
+              ticking = false;
+              const mid = wrap.scrollTop + (wrap.clientHeight * 0.5);
+              let bestIdx = 0;
+              let bestDist = Infinity;
+              blocks.forEach(function(b, i){
+                const center = b.offsetTop + (b.offsetHeight * 0.5);
+                const dist = Math.abs(center - mid);
+                if (dist < bestDist){ bestDist = dist; bestIdx = i; }
+              });
+              if (bestIdx !== currentIndex){
+                currentIndex = bestIdx;
+                updateArrows();
+                syncUiColor();
+              }
+            });
+          };
+          wrap.addEventListener('scroll', onScroll, { passive: true });
         } else {
           const onScroll = function(){
             const mid = wrap.scrollTop + (wrap.clientHeight * 0.5);

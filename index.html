@@ -166,8 +166,6 @@
         letter-spacing:0.04em;
         gap:0.35em;
         max-width: calc(100% - 32px);
-        /* mobile: keep title/subtitle always visible (no hover required) */
-        opacity:1;
       }
     }
 
@@ -256,6 +254,9 @@
       .nav-toggle{display:inline-flex;align-items:center}
       /* Mobile: hide "FULL FILM AVAILABLE UPON REQUEST" action across all page blocks */
       .cover-action--request{ display:none !important; }
+      /* Mobile: ensure titles/subtitles always visible without hover/tap */
+      .hover-hotspot{ opacity:1 !important; }
+
     }
   
 
